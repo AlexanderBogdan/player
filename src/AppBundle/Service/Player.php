@@ -12,26 +12,33 @@ use AppBundle\Model\PlayerFilter;
 use JMS\Serializer\Serializer;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 
-class Player {
+class Player
+{
     private $playerManager;
     private $jsonPatcher;
     private $recursiveValidator;
     private $serializer;
 
     /**
-     * @param PlayerManager      $playerManager
-     * @param JsonPatcher        $jsonPatcher
+     * @param PlayerManager $playerManager
+     * @param JsonPatcher $jsonPatcher
      * @param RecursiveValidator $recursiveValidator
-     * @param Serializer         $serializer
+     * @param Serializer $serializer
      */
-    public function __construct(PlayerManager $playerManager,JsonPatcher $jsonPatcher,RecursiveValidator $recursiveValidator,Serializer $serializer){
+    public function __construct(
+        PlayerManager $playerManager,
+        JsonPatcher $jsonPatcher,
+        RecursiveValidator $recursiveValidator,
+        Serializer $serializer
+    ) {
         $this->playerManager = $playerManager;
         $this->recursiveValidator = $recursiveValidator;
         $this->serializer = $serializer;
         $this->jsonPatcher = $jsonPatcher;
     }
 
-    public function getPlayers( PlayerFilter $filter ) : array {
+    public function getPlayers(PlayerFilter $filter): array
+    {
         $validator = $this->recursiveValidator->validate($filter);
 
         if (0 !== $validator->count()) {
@@ -53,8 +60,7 @@ class Player {
                 $data,
                 PlayerEntity::class,
                 'json'
-            )
-        ;
+            );
 
         $validator = $this->recursiveValidator->validate($newPlayer);
         if (0 !== $validator->count()) {
@@ -74,10 +80,7 @@ class Player {
             ->recursiveValidator
             ->validate($newPlayer);
 
-        if (
-            0 !== $validator->count()
-        )
-        {
+        if (0 !== $validator->count()) {
             throw new InvalidPlayerValidation($validator);
         }
 
@@ -87,12 +90,10 @@ class Player {
     public function getPlayer(string $playerId): PlayerEntity
     {
         return $this
-            ->playerManager->getPlayer($playerId)
-            ;
+            ->playerManager->getPlayer($playerId);
     }
 
-    public function getPlayerRecordAmount()
-    : int
+    public function getPlayerRecordAmount(): int
     {
         return $this->playerManager
             ->getPlayerRecordAmount();
