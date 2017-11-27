@@ -1,0 +1,4 @@
+app:
+    resource: '@AppBundle/Controller/'
+    type: rest
+    defaults: {_format: json}

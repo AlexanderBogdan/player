@@ -1,0 +1,47 @@
+services:
+
+  # Repositories
+
+  app.repository.player:
+    class: AppBundle\Repository\PlayerRepository
+    factory: ["@doctrine.orm.entity_manager", getRepository]
+    arguments: ['AppBundle:Player']
+
+  app.repository.player_session:
+    class: AppBundle\Repository\PlayerSessionRepository
+    factory: ["@doctrine.orm.entity_manager", getRepository]
+    arguments: ['AppBundle:PlayerSession']
+
+  # Managers
+
+  app.manager.player:
+    class: AppBundle\Manager\PlayerManager
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@jms_serializer'
+
+  app.manager.player_session:
+    class: AppBundle\Manager\PlayerSessionManager
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@jms_serializer'
+
+  # Services
+
+  app.service.player:
+    class: AppBundle\Service\Player
+    arguments:
+      - '@app.manager.player'
+      - '@app.service.json_patcher'
+      - '@validator'
+      - '@jms_serializer'
+
+  app.service.player_session:
+    class: AppBundle\Service\PlayerSession
+    arguments:
+      - '@app.manager.player_session'
+      - '@validator'
+      - '@jms_serializer'
+
+  app.service.json_patcher:
+    class: AppBundle\Service\JsonPatcher
