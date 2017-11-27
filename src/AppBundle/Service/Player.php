@@ -57,7 +57,7 @@ class Player {
         ;
 
         $validator = $this->recursiveValidator->validate($newPlayer);
-        if (0 === $validator->count()) {
+        if (0 !== $validator->count()) {
             throw new InvalidPlayerValidation($validator);
         }
 
