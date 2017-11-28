@@ -49,6 +49,28 @@ class PlayerSpec extends ObjectBehavior
         $this->shouldThrow(InvalidPlayerFilterValidation::class)->duringGetPlayers($playerFilter);
     }
 
+    function it_should_get_an_exception_for_an_invalid_player_while_creating_a_player
+    (
+        RecursiveValidator $recursiveValidator,
+        ConstraintViolationList $constraintViolationList,
+        PlayerEntity $player,
+        Serializer $serializer,
+        ArrayIterator $iterator
+    ) {
+        $serializer->deserialize('invalid player data', PlayerEntity::class, 'json')->willReturn(
+            $player
+        );
+
+        $constraintViolationList->count()->willReturn(1);
+        $constraintViolationList->getIterator()->willReturn($iterator);
+
+        $recursiveValidator->validate($player)->willReturn($constraintViolationList);
+
+        $this->shouldThrow(InvalidPlayerValidation::class)->duringCreatePlayer(
+            'invalid player data'
+        );
+    }
+
     function it_should_get_an_exception_for_an_invalid_player_while_updating_a_player
     (
         RecursiveValidator $recursiveValidator,
@@ -122,6 +144,26 @@ class PlayerSpec extends ObjectBehavior
         $this->getPlayers($playerFilter)->shouldReturn(
             ['a player entity', 'another player entity']
         );
+    }
+
+    function it_should_create_a_player
+    (
+        PlayerManager $playerManager,
+        Serializer $serializer,
+        PlayerEntity $player,
+        RecursiveValidator $recursiveValidator,
+        ConstraintViolationList $constraintViolationList
+    ) {
+        $constraintViolationList->count()->willReturn(0);
+        $recursiveValidator->validate($player)->willReturn($constraintViolationList);
+
+        $serializer->deserialize('a json string', PlayerEntity::class, 'json')->willReturn(
+            $player
+        );
+
+        $playerManager->createPlayer($player)->willReturn($player);
+
+        $this->createPlayer('a json string')->shouldReturn($player);
     }
 
     function it_should_update_a_player

@@ -37,6 +37,10 @@ class Player
         $this->jsonPatcher = $jsonPatcher;
     }
 
+    /**
+     * @param PlayerFilter $filter
+     * @return array
+     */
     public function getPlayers(PlayerFilter $filter): array
     {
         $validator = $this->recursiveValidator->validate($filter);
@@ -52,6 +56,10 @@ class Player
         return $return;
     }
 
+    /**
+     * @param $data
+     * @return PlayerEntity
+     */
     public function createPlayer($data)
     {
         $player = $this->serializer->deserialize($data, PlayerEntity::class, 'json');
@@ -64,6 +72,11 @@ class Player
         return $this->playerManager->createPlayer($player);
     }
 
+    /**
+     * @param $originalPlayer
+     * @param $data
+     * @return PlayerEntity
+     */
     public function updatePlayer($originalPlayer, $data)
     {
         $newPlayer = $this->serializer->deserialize($data, PlayerEntity::class, 'json');
@@ -76,6 +89,11 @@ class Player
         return $this->playerManager->updatePlayer($originalPlayer, $newPlayer);
     }
 
+    /**
+     * @param PlayerEntity $originalPlayer
+     * @param string $patchDocument
+     * @return PlayerEntity
+     */
     public function patchPlayer(PlayerEntity $originalPlayer, string $patchDocument): PlayerEntity
     {
         $targetDocument = $this->serializer->serialize($originalPlayer, 'json');
@@ -91,11 +109,18 @@ class Player
         return $this->playerManager->updatePlayer($originalPlayer, $newPlayer);
     }
 
+    /**
+     * @param string $playerId
+     * @return PlayerEntity
+     */
     public function getPlayer(string $playerId): PlayerEntity
     {
         return $this->playerManager->getPlayer($playerId);
     }
 
+    /**
+     * @return int
+     */
     public function getPlayerRecordAmount(): int
     {
         return $this->playerManager->getPlayerRecordAmount();

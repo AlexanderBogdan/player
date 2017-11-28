@@ -63,9 +63,12 @@ class PlayerController extends FOSRestController
         return $this->view($player);
     }
 
-
     /**
      * @param Request $request
+     * @throws LogicException
+     * @throws InvalidPlayerValidation
+     * @throws PlayerNotFoundException
+     * @throws NonUniqueResultException
      * @return View
      */
     public function postAction(Request $request): View
