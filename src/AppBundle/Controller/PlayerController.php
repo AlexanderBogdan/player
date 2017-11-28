@@ -30,10 +30,12 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 class PlayerController extends FOSRestController
 {
     /**
+     * @param Request $request
      * @throws InvalidParameterException
      * @throws InvalidPlayerFilterValidation
      * @throws NonUniqueResultException
      * @throws NoResultException
+     * @return View
      */
     public function cgetAction(Request $request): View
     {
@@ -49,8 +51,10 @@ class PlayerController extends FOSRestController
     }
 
     /**
+     * @param string $playerId
      * @throws NonUniqueResultException
      * @throws PlayerNotFoundException
+     * @return View
      */
     public function getAction(string $playerId): View
     {
@@ -59,11 +63,27 @@ class PlayerController extends FOSRestController
         return $this->view($player);
     }
 
+
     /**
+     * @param Request $request
+     * @return View
+     */
+    public function postAction(Request $request): View
+    {
+        $data = (string) $request->getContent();
+        $createdPlayer = $this->getPlayerService()->createPlayer($data);
+
+        return $this->view($createdPlayer, Response::HTTP_CREATED);
+    }
+
+    /**
+     * @param string $playerId
+     * @param Request $request
      * @throws LogicException
      * @throws InvalidPlayerValidation
      * @throws PlayerNotFoundException
      * @throws NonUniqueResultException
+     * @return View
      */
     public function putAction(string $playerId, Request $request): View
     {
@@ -71,10 +91,12 @@ class PlayerController extends FOSRestController
         $data = (string) $request->getContent();
         $updatedPlayer = $this->getPlayerService()->updatePlayer($player, $data);
 
-        return $this->view($updatedPlayer);
+        return $this->view($updatedPlayer, Response::HTTP_NO_CONTENT);
     }
 
     /**
+     * @param string $playerId
+     * @param Request $request
      * @throws LogicException
      * @throws InvalidTargetDocumentJsonException
      * @throws InvalidPatchDocumentJsonException
@@ -83,6 +105,7 @@ class PlayerController extends FOSRestController
      * @throws InvalidPlayerValidation
      * @throws PlayerNotFoundException
      * @throws NonUniqueResultException
+     * @return View
      */
     public function patchAction(string $playerId, Request $request): View
     {
@@ -90,7 +113,7 @@ class PlayerController extends FOSRestController
         $data = (string) $request->getContent();
         $updatedPlayer = $this->getPlayerService()->patchPlayer($player, $data);
 
-        return $this->view($updatedPlayer);
+        return $this->view($updatedPlayer, Response::HTTP_NO_CONTENT);
     }
 
     private function getPlayerService(): PlayerService

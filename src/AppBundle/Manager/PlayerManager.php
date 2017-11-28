@@ -48,6 +48,14 @@ class PlayerManager
         return $originalPlayer;
     }
 
+    public function createPlayer(Player $player): Player
+    {
+        $this->entityManager->persist($player);
+        $this->entityManager->flush();
+
+        return $player;
+    }
+
     /**
      * @throws NonUniqueResultException
      * @throws PlayerNotFoundException

@@ -52,15 +52,21 @@ class Player
         return $return;
     }
 
+    public function createPlayer($data)
+    {
+        $player = $this->serializer->deserialize($data, PlayerEntity::class, 'json');
+
+        $validator = $this->recursiveValidator->validate($player);
+        if (0 !== $validator->count()) {
+            throw new InvalidPlayerValidation($validator);
+        }
+
+        return $this->playerManager->createPlayer($player);
+    }
+
     public function updatePlayer($originalPlayer, $data)
     {
-        $newPlayer = $this
-            ->serializer
-            ->deserialize(
-                $data,
-                PlayerEntity::class,
-                'json'
-            );
+        $newPlayer = $this->serializer->deserialize($data, PlayerEntity::class, 'json');
 
         $validator = $this->recursiveValidator->validate($newPlayer);
         if (0 !== $validator->count()) {
@@ -76,9 +82,7 @@ class Player
         $patchedDocument = $this->jsonPatcher->patch($targetDocument, $patchDocument);
         $newPlayer = $this->serializer->deserialize($patchedDocument, PlayerEntity::class, 'json');
 
-        $validator = $this
-            ->recursiveValidator
-            ->validate($newPlayer);
+        $validator = $this->recursiveValidator->validate($newPlayer);
 
         if (0 !== $validator->count()) {
             throw new InvalidPlayerValidation($validator);
@@ -89,13 +93,11 @@ class Player
 
     public function getPlayer(string $playerId): PlayerEntity
     {
-        return $this
-            ->playerManager->getPlayer($playerId);
+        return $this->playerManager->getPlayer($playerId);
     }
 
     public function getPlayerRecordAmount(): int
     {
-        return $this->playerManager
-            ->getPlayerRecordAmount();
+        return $this->playerManager->getPlayerRecordAmount();
     }
 }
